@@ -16,25 +16,25 @@
   # release notes.
   home.stateVersion = "23.05"; # Please read the comment before changing.
 
+  home.sessionPath = [
+    "$HOME/go/bin"
+  ];
+
   # The home.packages option allows you to install Nix packages into your
   # environment.
-  home.packages = [
-    # # Adds the 'hello' command to your environment. It prints a friendly
-    # # "Hello, world!" when run.
-    # pkgs.hello
-
-    # # It is sometimes useful to fine-tune packages, for example, by applying
-    # # overrides. You can do that directly here, just don't forget the
-    # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
-    # # fonts?
-    # pkgs.nerdfonts.override { fonts = [ "FantasqueSansMono" ]; }
-
-    # # You can also create simple shell scripts directly inside your
-    # # configuration. For example, this adds a command 'my-hello' to your
-    # # environment:
-    # (pkgs.writeShellScriptBin "my-hello" ''
-    #   echo "Hello, ${config.home.username}!"
-    # '')
+  home.packages = with pkgs; [
+    gopls
+    gotools
+    tldr
+    golint
+    golangci-lint
+    spotify
+    ollama
+    croc
+    calibre
+    libreoffice
+    nodejs_22
+    glibc
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -69,66 +69,7 @@
 
   programs.autorandr = { enable = true; };
 
-  # xsession.windowManager.i3 = {
-  #   enable = false;
-  #   config = {
-  #     assigns = {
-  #       "1: terminal" 
-  #     };
-  #   };
-  # };
-
-  # xsession.windowManager = {
-
-  # xmonad = {
-  #   enable = true;
-  #   enableContribAndExtras = true;
-  # };
-  # awesome = {
-  #   enable = true;
-  #   luaModules = [
-  #     pkgs.luaPackages.luarocks # is the package manager for lua modules
-  #     pkgs.luaPackages.luadbi-mysql # database abstraction layer
-  #     pkgs.luaPackages.vicious
-  #   ];
-
-  # };
-  # };
-
   programs = {
-    nushell = {
-      enable = true;
-      # The config.nu can be anywhere you want if you like to edit your Nushell with Nu
-      # configFile.source = ./.../config.nu;
-      # for editing directly to config.nu 
-      extraConfig = ''
-        let carapace_completer = {|spans|
-        carapace $spans.0 nushell $spans | from json
-        }
-        $env.config = {
-         show_banner: false,
-         completions: {
-         case_sensitive: false # case-sensitive completions
-         quick: true    # set to false to prevent auto-selecting completions
-         partial: true    # set to false to prevent partial filling of the prompt
-         algorithm: "fuzzy"    # prefix or fuzzy
-         external: {
-         # set to false to prevent nushell looking into $env.PATH to find more suggestions
-             enable: true 
-         # set to lower can improve completion performance at the cost of omitting some options
-             max_results: 100 
-             completer: $carapace_completer # check 'carapace_completer' 
-           }
-         }
-        } 
-        $env.PATH = ($env.PATH | 
-        split row (char esep) |
-        prepend /home/myuser/.apps |
-        append /usr/bin/env
-        )
-      '';
-      shellAliases = { };
-    };
     carapace = {
       enable = true;
       enableNushellIntegration = true;
@@ -136,7 +77,7 @@
 
     zsh = {
       enable = true;
-      enableAutosuggestions = true;
+      autosuggestion.enable = true;
       enableCompletion = true;
       autocd = true;
       enableVteIntegration = true;
@@ -198,142 +139,151 @@
     #     oderwat.indent-rainbow
     #   ]);
     # };
-    # nixvim = {
-    #   enable = true;
-    #   enableMan = true;
-    #   colorschemes.catppuccin.enable = true;
-    #   clipboard = {
-    #     register = "unnamedplus";
-    #     providers.xclip.enable = true;
-    #   };
-    #   globals = { mapleader = " "; };
-    #   keymaps = [
-    #     {
-    #       key = ";";
-    #       action = ":";
-    #     }
-    #     {
-    #       key = "<leader>v";
-    #       action = "<cmd>CHADopen<cr>";
-    #       mode = "n";
-    #     }
-    #   ];
-    #   options = {
-    #     number = true;
-    #     relativenumber = true;
-    #     shiftwidth = 2;
-    #   };
-    #   plugins = {
-    #     auto-save = { enable = true; };
-    #     surround = { enable = true; };
-    #     chadtree = { enable = true; };
-    #     lint = { enable = true; };
-    #     which-key = { enable = true; };
-    #     luasnip = { enable = true; };
-    #     lightline = {
-    #       enable = true;
-    #       colorscheme = "rosepine";
-    #     };
-    #     copilot-lua.enable = true;
-    #     nix.enable = true;
-    #     nvim-autopairs.enable = true;
-    #     telescope = {
-    #       enable = true;
-    #       keymaps = {
-    #         "<C-p>" = {
-    #           action = "git_files";
-    #           desc = "Telescope Git Files";
-    #         };
-    #         "<leader>fg" = "live_grep";
-    #       };
-    #     };
-    #     fugitive.enable = true;
-    #     harpoon = {
-    #       enable = true;
-    #       enableTelescope = true;
-    #       keymaps = {
-    #         addFile = "<leader>ha";
-    #         toggleQuickMenu = "<leader>g";
-    #       };
-    #     };
-    #     treesitter.enable = true;
-    #     treesitter-context.enable = true;
-    #     cmp-nvim-lsp.enable = true;
-    #     cmp = {
-    #       enable = true;
-    #       settings = {
-    #         mapping = {
-    #           "<CR>" = "cmp.mapping.confirm({ select = true })";
-    #           "<Tab>" = {
-    #             modes = [ "i" "s" ];
-    #             action = ''
-    #               function(fallback)
-    #                 if cmp.visible() then
-    #                   cmp.select_next_item()
-    #                 elseif luasnip.expandable() then
-    #                   luasnip.expand()
-    #                 elseif luasnip.expand_or_jumpable() then
-    #                   luasnip.expand_or_jump()
-    #                 elseif check_backspace() then
-    #                   fallback()
-    #                 else
-    #                   fallback()
-    #                 end
-    #               end
-    #             '';
-    #           };
-    #           "<S-Tab>" = {
-    #             modes = [ "i" "s" ];
-    #             action = ''
-    #               function(fallback)
-    #                 if cmp.visible() then
-    #                   cmp.select_prev_item()
-    #                 elseif luasnip.expandable() then
-    #                   luasnip.expand()
-    #                 elseif luasnip.expand_or_jumpable() then
-    #                   luasnip.expand_or_jump()
-    #                 elseif check_backspace() then
-    #                   fallback()
-    #                 else
-    #                   fallback()
-    #                 end
-    #               end
-    #             '';
-    #           };
-    #         };
-    #       };
-    #     };
-    #     lsp = {
-    #       enable = true;
-    #       keymaps = {
-    #         diagnostic = {
-    #           "<leader>j" = "goto_next";
-    #           "<leader>k" = "goto_prev";
-    #         };
-    #         lspBuf = {
-    #           K = "hover";
-    #           gD = "references";
-    #           gd = "definition";
-    #           gi = "implementation";
-    #           gt = "type_definition";
-    #         };
-    #       };
-    #       servers = {
-    #         bashls.enable = true;
-    #         gopls.enable = true;
-    #         terraformls.enable = true;
-    #         jsonls.enable = true;
-    #         nil_ls.enable = true;
-    #         rust-analyzer.enable = true;
-    #         html.enable = true;
-    #         pyright.enable = true;
-    #         tsserver.enable = true;
-    #       };
-    #     };
-    #     tmux-navigator = { enable = true; };
-    #   };
-    # };
+    nixvim = {
+      enable = true;
+      enableMan = true;
+      colorschemes.catppuccin.enable = true;
+      clipboard = {
+        register = "unnamedplus";
+        providers.xclip.enable = true;
+      };
+      globals = { mapleader = " "; };
+      keymaps = [
+        {
+          key = ";";
+          action = ":";
+        }
+        {
+          key = "<leader>v";
+          action = "<cmd>CHADopen<cr>";
+          mode = "n";
+        }
+      ];
+      opts = {
+        number = true;
+        relativenumber = true;
+        shiftwidth = 2;
+      };
+      plugins = {
+        auto-save = { enable = true; };
+        surround = { enable = true; };
+        chadtree = { enable = true; };
+        lint = { enable = true; };
+        which-key = { enable = true; };
+        luasnip = { enable = true; };
+        lightline = {
+          enable = true;
+          colorscheme = "rosepine";
+        };
+        copilot-lua.enable = true;
+        nix.enable = true;
+        nvim-autopairs.enable = true;
+        telescope = {
+          enable = true;
+          # keymaps = {
+          #   "<C-p>" = {
+          #     action = "git_files";
+          #     desc = "Telescope Git Files";
+          #   };
+          #   "<leader>fg" = "live_grep";
+          # };
+        };
+        fugitive.enable = true;
+        harpoon = {
+          enable = true;
+          enableTelescope = true;
+          keymaps = {
+            addFile = "<leader>ha";
+            toggleQuickMenu = "<leader>g";
+          };
+        };
+        treesitter.enable = true;
+        treesitter-context.enable = true;
+        cmp-nvim-lsp.enable = true;
+        cmp = {
+          enable = true;
+          # settings = {
+          #   mapping = {
+          #     "<CR>" = "cmp.mapping.confirm({ select = true })";
+          #     "<Tab>" = {
+          #       modes = [ "i" "s" ];
+          #       action = ''
+          #         function(fallback)
+          #           if cmp.visible() then
+          #             cmp.select_next_item()
+          #           elseif luasnip.expandable() then
+          #             luasnip.expand()
+          #           elseif luasnip.expand_or_jumpable() then
+          #             luasnip.expand_or_jump()
+          #           elseif check_backspace() then
+          #             fallback()
+          #           else
+          #             fallback()
+          #           end
+          #         end
+          #       '';
+          #     };
+          #     "<S-Tab>" = {
+          #       modes = [ "i" "s" ];
+          #       action = ''
+          #         function(fallback)
+          #           if cmp.visible() then
+          #             cmp.select_prev_item()
+          #           elseif luasnip.expandable() then
+          #             luasnip.expand()
+          #           elseif luasnip.expand_or_jumpable() then
+          #             luasnip.expand_or_jump()
+          #           elseif check_backspace() then
+          #             fallback()
+          #           else
+          #             fallback()
+          #           end
+          #         end
+          #       '';
+          #     };
+          #   };
+          # };
+        };
+        lsp = {
+          enable = true;
+          keymaps = {
+            diagnostic = {
+              "<leader>j" = "goto_next";
+              "<leader>k" = "goto_prev";
+            };
+            lspBuf = {
+              K = "hover";
+              gD = "references";
+              gd = "definition";
+              gi = "implementation";
+              gt = "type_definition";
+            };
+          };
+          servers = {
+            bashls.enable = true;
+            gopls.enable = true;
+            terraformls.enable = true;
+            jsonls.enable = true;
+            nil-ls.enable = true;
+            # rust-analyzer.enable = true;
+            html.enable = true;
+            pyright.enable = true;
+            tsserver.enable = true;
+          };
+        };
+        tmux-navigator = { enable = true; };
+      };
+    };
 
+    alacritty = {
+      enable = true;
+      settings = {
+        window = {
+          opacity = 0.95;
+        };
+      };
+    };
+    
     tmux = {
       enable = true;
       terminal = "alacritty";
@@ -359,6 +309,18 @@
     direnv = {
       enable = true;
       nix-direnv.enable = true;
+    };
+    rofi = {
+      enable = true;
+    };
+    go = {
+      enable = true;
+    };
+    gh = {
+      enable = true;
+      settings = {
+        git_protocol = "ssh";
+      };
     };
   };
 }
