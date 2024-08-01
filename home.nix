@@ -1,9 +1,17 @@
-{ config, pkgs, inputs, ... }:
+{
+  config,
+  pkgs,
+  inputs,
+  ...
+}:
 
 {
   nixpkgs.config.allowUnfreePredicate = (pkg: true);
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
+  home.keyboard = {
+    options = [ "caps:escape" ];
+  };
   home.username = "max";
   home.homeDirectory = "/home/max";
 
@@ -16,25 +24,37 @@
   # release notes.
   home.stateVersion = "23.05"; # Please read the comment before changing.
 
-  home.sessionPath = [
-    "$HOME/go/bin"
-  ];
+  home.sessionPath = [ "$HOME/go/bin" "$HOME/.config/emacs/bin" ];
 
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
-    gopls
-    gotools
-    tldr
-    golint
-    golangci-lint
-    spotify
-    ollama
+    zathura
+    fd
     croc
-    calibre
+    vlc
+    okular
     libreoffice
-    nodejs_22
-    glibc
+    xournal
+    feh
+    pulseaudio
+    pavucontrol
+    brightnessctl
+    ripgrep
+    devbox
+    delve
+    autotiling
+    i3a
+    i3wsr
+    i3status
+    i3altlayout
+    picom
+    graphviz
+    ollama
+    jless
+    (nerdfonts.override {fonts = ["Hack"];})
+    jost
+    ibm-plex
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -62,12 +82,22 @@
   #  /etc/profiles/per-user/max/etc/profile.d/hm-session-vars.sh
   #
   # if you don't want to manage your shell through Home Manager.
-  home.sessionVariables = { EDITOR = "nvim"; };
+  home.sessionVariables = {
+    TERM = "xterm-256color";
+  };
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
-  programs.autorandr = { enable = true; };
+  programs.autorandr = {
+    enable = true;
+  };
+
+  fonts = {
+    fontconfig = {
+      enable = true;
+    };
+  };
 
   programs = {
     carapace = {
@@ -88,10 +118,19 @@
         nv = "nvim";
         k = "kubectl --";
       };
-      history = { ignoreDups = true; };
+      history = {
+        ignoreDups = true;
+      };
       oh-my-zsh = {
         enable = true;
-        plugins = [ "git" "sudo" "aws" ];
+        plugins = [
+          "git"
+          "sudo"
+          "aws"
+        ];
+      };
+      sessionVariables = {
+        TERM = "xterm-256color";
       };
     };
     starship = {
@@ -110,7 +149,9 @@
       enableZshIntegration = true;
       changeDirWidgetCommand = "fd --type d . $HOME";
       fileWidgetCommand = "fd --type d .";
-      tmux = { enableShellIntegration = true; };
+      tmux = {
+        enableShellIntegration = true;
+      };
     };
     git = {
       enable = true;
@@ -118,27 +159,6 @@
       userEmail = "maxbrydak@gmail.com";
       userName = "mbrydak";
     };
-    vscode = {
-      enable = true;
-      package = pkgs.vscode.fhs;
-    };
-    # vscode = {
-    #   enable = true;
-    #   enableExtensionUpdateCheck = false;
-    #   enableUpdateCheck = false;
-    #   extensions = (with pkgs.vscode-extensions; [
-    #     golang.go
-    #     asdine.cue
-    #     mkhl.direnv 
-    #     tsandall.opa 
-    #     hashicorp.terraform
-    #     christian-kohler.path-intellisense
-    #     # redhat.ansible
-    #     bbenoist.nix
-    #     ms-kubernetes-tools.vscode-kubernetes-tools
-    #     oderwat.indent-rainbow
-    #   ]);
-    # };
     nixvim = {
       enable = true;
       enableMan = true;
@@ -147,7 +167,9 @@
         register = "unnamedplus";
         providers.xclip.enable = true;
       };
-      globals = { mapleader = " "; };
+      globals = {
+        mapleader = " ";
+      };
       keymaps = [
         {
           key = ";";
@@ -165,12 +187,24 @@
         shiftwidth = 2;
       };
       plugins = {
-        auto-save = { enable = true; };
-        surround = { enable = true; };
-        chadtree = { enable = true; };
-        lint = { enable = true; };
-        which-key = { enable = true; };
-        luasnip = { enable = true; };
+        auto-save = {
+          enable = true;
+        };
+        surround = {
+          enable = true;
+        };
+        chadtree = {
+          enable = true;
+        };
+        lint = {
+          enable = true;
+        };
+        which-key = {
+          enable = true;
+        };
+        luasnip = {
+          enable = true;
+        };
         lightline = {
           enable = true;
           colorscheme = "rosepine";
@@ -271,22 +305,25 @@
             tsserver.enable = true;
           };
         };
-        tmux-navigator = { enable = true; };
+        tmux-navigator = {
+          enable = true;
+        };
       };
     };
 
     alacritty = {
-      enable = true;
+      enable = false;
       settings = {
-        window = {
-          opacity = 0.95;
+        font = {
+          normal = {
+            family = "Hack Nerd Font Mono";
+          };
         };
       };
     };
-    
     tmux = {
       enable = true;
-      terminal = "alacritty";
+      terminal = "xterm-256color";
       clock24 = true;
       mouse = true;
       plugins = with pkgs; [
@@ -310,17 +347,158 @@
       enable = true;
       nix-direnv.enable = true;
     };
+    helix = {
+      enable = true;
+      defaultEditor = true;
+      extraPackages = [
+        pkgs.marksman
+        pkgs.terraform-ls
+        pkgs.nil
+        pkgs.rust-analyzer
+        pkgs.gopls
+      ];
+      languages = {
+        language = [
+          {
+            name = "rust";
+            auto-format = true;
+          }
+          {
+            name = "hcl";
+            auto-format = true;
+          }
+        ];
+      };
+    };
     rofi = {
       enable = true;
-    };
-    go = {
-      enable = true;
-    };
-    gh = {
-      enable = true;
-      settings = {
-        git_protocol = "ssh";
+      extraConfig = {
+        modes = "window,drun,run,ssh";
+        show-icons = true;
       };
+    };
+
+  };
+  xsession.windowManager.i3 = {
+    enable = true;
+    config = {
+      defaultWorkspace = "workspace number 3";
+      bars = [
+        {
+          mode = "dock";
+          hiddenState = "hide";
+          workspaceButtons = true;
+          workspaceNumbers = true;
+          statusCommand = "${pkgs.i3status}/bin/i3status";
+          trayOutput = "primary";
+          colors = {
+            background = "#000000";
+            statusline = "#ffffff";
+            separator = "#666666";
+            focusedWorkspace = {
+              border = "#4c7899";
+              background = "#285577";
+              text = "#ffffff";
+            };
+            activeWorkspace = {
+              border = "#333333";
+              background = "#5f676a";
+              text = "#ffffff";
+            };
+            inactiveWorkspace = {
+              border = "#333333";
+              background = "#222222";
+              text = "#888888";
+            };
+            urgentWorkspace = {
+              border = "#2f343a";
+              background = "#900000";
+              text = "#ffffff";
+            };
+            bindingMode = {
+              border = "#2f343a";
+              background = "#900000";
+              text = "#ffffff";
+            };
+          };
+
+          fonts = {
+            names = [ "Hack" ];
+            size = 11.0;
+          };
+
+        }
+      ];
+
+      fonts = {
+        names = [ "Hack" ];
+        size = 11.0;
+      };
+      workspaceAutoBackAndForth = true;
+      workspaceOutputAssign = [
+        {
+          output = "HDMI1";
+          workspace = "3";
+        }
+        {
+          output = "eDP1";
+          workspace = "2";
+        }
+        {
+          output = "DP-2";
+          workspace = "1";
+        }
+      ];
+      modifier = "Mod4";
+      keybindings =
+        let
+          modifier = config.xsession.windowManager.i3.config.modifier;
+        in
+        pkgs.lib.mkOptionDefault {
+          "${modifier}+Control+Left" = "focus output left";
+          "${modifier}+Control+Right" = "focus output right";
+          "${modifier}+Control+Shift+Left" = "move output left";
+          "${modifier}+Control+Shift+Right" = "move output right";
+          "XF86AudioRaiseVolume" = "exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +10% && $refresh_i3status";
+          "XF86AudioLowerVolume " = "exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -10% && $refresh_i3status";
+          "XF86AudioMute" = "exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status";
+          "XF86AudioMicMute" = "exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status";
+          "XF86MonBrightnessUp" = "exec --no-stsartup-id brightnessctl set +10%";
+          "XF86MonBrightnessDown" = "exec --no-stsartup-id brightnessctl set 10%-";
+        };
+      startup = [
+        {
+          command = "dex --autostart --environment i3";
+          always = false;
+          notification = false;
+        }
+        {
+          command = "xss-lock --transfer-sleep-lock -- i3lock --nofork";
+          always = false;
+          notification = false;
+        }
+        {
+          command = "nm-applet";
+          always = false;
+          notification = false;
+        }
+        {
+          command = "i3wsr";
+          always = true;
+          notification = false;
+        }
+        {
+          command = "i3altlayout";
+          always = true;
+          notification = false;
+        }
+      ];
+      terminal = "alacritty";
+    };
+  };
+  dconf.settings = {
+    "org/gnome/desktop/input-sources" = {
+      xkb-options = [ "caps:escape" ];
     };
   };
 }

@@ -14,21 +14,29 @@
     };
   };
 
-  outputs = { nixpkgs, home-manager, ... }@inputs:
+  outputs =
+    { nixpkgs, home-manager, ... }@inputs:
     let
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
-      config = { allowUnfree = true; };
-    in {
+      config = {
+        allowUnfree = true;
+      };
+    in
+    {
       homeConfigurations."max" = home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
 
         # Specify your home configuration modules here, for example,
         # the path to your home.nix.
-        modules = [ ./home.nix inputs.nixvim.homeManagerModules.nixvim ];
+        modules = [
+          ./home.nix
+          inputs.nixvim.homeManagerModules.nixvim
+        ];
 
         # Optionally use extraSpecialArgs
         # to pass through arguments to home.nix
       };
+      formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt-rfc-style;
     };
 }
