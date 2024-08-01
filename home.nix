@@ -24,37 +24,101 @@
   # release notes.
   home.stateVersion = "23.05"; # Please read the comment before changing.
 
-  home.sessionPath = [ "$HOME/go/bin" "$HOME/.config/emacs/bin" ];
+  home.sessionPath = [
+    "$HOME/go/bin"
+    "$HOME/.config/emacs/bin"
+  ];
 
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
-    zathura
-    fd
-    croc
-    vlc
-    okular
-    libreoffice
-    xournal
-    feh
-    pulseaudio
-    pavucontrol
-    brightnessctl
-    ripgrep
-    devbox
-    delve
+    ansible
+    arandr
+    archi
+    argocd
     autotiling
-    i3a
-    i3wsr
-    i3status
-    i3altlayout
-    picom
+    bat
+    bitwarden
+    blueberry
+    brightnessctl
+    cloudflare-warp
+    croc
+    csview
+    delve
+    devbox
+    dig
+    direnv
+    discord
+    distrobox
+    du-dust
+    fd
+    feh
+    firefox
+    fluxcd
+    foliate
+    freshfetch
+    fzf
+    gh
+    git
+    git-lfs
+    glow
+    gnumake
+    go
+    google-chrome
+    gparted
     graphviz
-    ollama
-    jless
-    (nerdfonts.override {fonts = ["Hack"];})
-    jost
+    hddtemp
+    htop
     ibm-plex
+    inetutils
+    jless
+    jost
+    jq
+    k3d
+    k9s
+    killall
+    kubectl
+    kubernetes-helm
+    libgen-cli
+    llama-cpp
+    lm_sensors
+    (nerdfonts.override { fonts = [ "Hack" ]; })
+    networkmanager
+    networkmanager-openconnect
+    nil
+    nix-index
+    obsidian
+    okular
+    openconnect
+    openssl
+    pavucontrol
+    pcmanfm
+    picom
+    resumed
+    ripgrep
+    rsync
+    scrot
+    shutter
+    slack
+    spotify
+    ssm-session-manager-plugin
+    starship
+    tealdeer
+    thunderbird
+    traceroute
+    transmission_4
+    tree
+    unzip
+    usbutils
+    vlc
+    xorg.xbacklight
+    yq
+    zap
+    zathura
+    zeal
+    zip
+    zotero
+    zoxide
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -372,10 +436,12 @@
     };
     rofi = {
       enable = true;
+      terminal = "alacritty";
       extraConfig = {
         modes = "window,drun,run,ssh";
         show-icons = true;
       };
+      theme = "gruvbox-dark-soft";
     };
 
   };
@@ -434,6 +500,18 @@
         names = [ "Hack" ];
         size = 11.0;
       };
+
+      gaps = {
+        smartGaps = true;
+        bottom = 5;
+        horizontal = 5;
+        inner = 5;
+        left = 5;
+        outer = 5;
+        right = 5;
+        vertical = 5;
+      };
+
       workspaceAutoBackAndForth = true;
       workspaceOutputAssign = [
         {
